@@ -411,7 +411,8 @@ export default function MainPage() {
     }
 
     const handleClickTranscript = async (file, text) => {
-        copyToClipboard(text);
+        const cleanedText = cleanTranscriptText(text);
+        copyToClipboard(cleanedText);
         setAudioFile(file);
         setOpenAudioDialog(true);
     };
@@ -454,6 +455,14 @@ export default function MainPage() {
         }).catch(err => {
             console.error('テキストのコピーに失敗しました:', err);
         });
+    };
+
+    const cleanTranscriptText = (text) => {
+        const lines = text.split('\n');
+        return lines
+            .filter(line => !line.includes('-->') && line.trim() !== 'WEBVTT')
+            .join('\n')
+            .trim();
     };
 
     return (
