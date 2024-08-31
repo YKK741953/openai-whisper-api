@@ -410,15 +410,11 @@ export default function MainPage() {
         setOpenSettings(false)
     }
 
-    const handleClickTranscript = async (file) => {
-        /**
-         * TODO: Play audio data
-         */
-
-        setAudioFile(file)
-        setOpenAudioDialog(true)
-
-    }
+    const handleClickTranscript = async (file, text) => {
+        copyToClipboard(text);
+        setAudioFile(file);
+        setOpenAudioDialog(true);
+    };
 
     const handleCloseSnack = () => {
         setOpenSnack(false)
@@ -451,6 +447,15 @@ export default function MainPage() {
 
     }
 
+    const copyToClipboard = (text) => {
+        navigator.clipboard.writeText(text).then(() => {
+            console.log('テキストがクリップボードにコピーされました');
+            setOpenSnack(true); // スナックバーを表示してユーザーに通知
+        }).catch(err => {
+            console.error('テキストのコピーに失敗しました:', err);
+        });
+    };
+
     return (
         <div className={classes.container}>
             <div ref={listRef} className={classes.main}>
@@ -475,7 +480,7 @@ export default function MainPage() {
                                 <Transcript
                                 key={item.filename}
                                 {...item}
-                                onClick={() => handleClickTranscript(item.filename)}
+                                onClick={() => handleClickTranscript(item.filename, item.data)}
                                 onDelete={handleDelete}
                                 />
                             )
@@ -503,7 +508,7 @@ export default function MainPage() {
             }
             {
                 openSnack && createPortal(
-                    <SnackBar onClose={handleCloseSnack} text="Problem sending the request to remote Whisper API." />,
+                    <SnackBar onClose={handleCloseSnack} text="テキストがクリップボードにコピーされました。" />,
                     document.body,
                 )
             }
