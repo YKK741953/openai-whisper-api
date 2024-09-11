@@ -15,9 +15,12 @@ const app = next({ dev, hostname, port })
 const handle = app.getRequestHandler()
 
 const httpsOptions = {
-    key: fs.readFileSync(process.env.SSL_KEY_PATH),
-    cert: fs.readFileSync(process.env.SSL_CERT_PATH)
-}
+    key: fs.readFileSync(process.env.SSL_KEY_PATH, 'utf8'),
+    cert: fs.readFileSync(process.env.SSL_CERT_PATH, 'utf8')
+  };
+
+console.log('Key file content:', httpsOptions.key);
+console.log('Cert file content:', httpsOptions.cert);
 
 app.prepare().then(() => {
     createServer(httpsOptions, (req, res) => {
@@ -26,8 +29,13 @@ app.prepare().then(() => {
         handle(req, res, parsedUrl)
 
     }).listen(port, (err) => {
-        if(err) throw err
-        console.log('\x1b[35m%s\x1b[0m', 'event', `- started ssl server on https://localhost:${port}`)
-    })
-})
+        if(err) {
+          console.error('Server error:', err);
+          throw err;
+        }
+        console.log('\x1b[35m%s\x1b[0m', 'event', `- started ssl server on https://localhost:${port}`);
+      });
+    }).catch(err => {
+      console.error('Preparation error:', err);
+    });
 

@@ -51,7 +51,7 @@ try:
     subprocess.run(["git", "commit", "-m", commit_message], check=True)
 
     # 必要に応じてプッシュを追加
-    # subprocess.run(["git", "push", "origin", "main"], check=True)
+    subprocess.run(["git", "push", "origin", "main"], check=True)
 
     print("Commit successful")
 
