@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 :root {
     --vt-c-white: #ffffff;
     --vt-c-white-soft: #f8f8f8;
@@ -82,4 +86,3 @@ body {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
-  
