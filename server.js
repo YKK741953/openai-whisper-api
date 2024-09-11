@@ -3,18 +3,20 @@ const { parse } = require('url')
 const next = require('next')
 const fs = require('fs')
 
+require('dotenv').config()
+
 const dev = process.env.NODE_ENV !== 'production'
 
-const hostname = '192.168.1.80'
-const port = 3006
+const hostname = process.env.HOSTNAME
+const port = parseInt(process.env.PORT, 10)
 
 //const app = next({ dev })
 const app = next({ dev, hostname, port })
 const handle = app.getRequestHandler()
 
 const httpsOptions = {
-    key: fs.readFileSync('./key.pem'),
-    cert: fs.readFileSync('./cert.pem')
+    key: fs.readFileSync(process.env.SSL_KEY_PATH),
+    cert: fs.readFileSync(process.env.SSL_CERT_PATH)
 }
 
 app.prepare().then(() => {
