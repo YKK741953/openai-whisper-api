@@ -52,7 +52,7 @@ try:
     print("Commit successful")
 
     # 必要に応じてプッシュを追加
-    subprocess.run(["git", "push", "origin", "main"], check=True)
+    subprocess.run(["git", "push", "-u", "origin", "main"], check=True)
     print("Push successful")
 
     # ログファイルに記録（オプション）
