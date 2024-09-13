@@ -3,7 +3,6 @@ import MainPage from '../components/mainPage'
 export const metadata = {
     title: 'Whisper API App',
     description: 'A sample webapp for transcribing speech using OpenAI Speech to Text API based on Whisper',
-    viewport: 'maximum-scale=1.0, minimum-scale=1.0, initial-scale=1.0, width=device-width, user-scalable=0',
     icons: {
         icon: '/logo192.png',
         shortcut: '/logo192.png',
@@ -13,6 +12,14 @@ export const metadata = {
             url: '/logo192.png',
         }
     }
+}
+
+export const viewport = {
+    width: 'device-width',
+    initialScale: 1,
+    maximumScale: 1,
+    minimumScale: 1,
+    userScalable: false,
 }
 
 export default function Page() {
