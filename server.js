@@ -31,10 +31,11 @@ app.prepare().then(() => {
     }
   });
 
-  server.listen(port, (err) => {
+  server.listen(port, '0.0.0.0', (err) => {
     if (err) throw err;
     console.log(`> Ready on https://${hostname}:${port}`);
   });
+  
 }).catch(err => {
   console.error('Error occurred starting server:', err);
   process.exit(1);

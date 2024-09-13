@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "",
   "scripts": {
-    "dev": "next dev -H 0.0.0.0 -p 3005",
+    "dev": "node server.js",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
