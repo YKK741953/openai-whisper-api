@@ -41,7 +41,6 @@ app.prepare().then(() => {
   process.exit(1);
 });
 
-
 // グレースフルシャットダウンの処理
 process.on('SIGTERM', () => {
   console.log('SIGTERM received, shutting down gracefully');
@@ -60,3 +59,9 @@ process.on('uncaughtException', (error) => {
 process.on('unhandledRejection', (reason, promise) => {
   console.error('Unhandled Rejection at:', promise, 'reason:', reason);
 });
+
+console.log('Environment:', process.env.NODE_ENV);
+console.log('Hostname:', hostname);
+console.log('Port:', port);
+console.log('SSL Key Path:', process.env.SSL_KEY_PATH);
+console.log('SSL Cert Path:', process.env.SSL_CERT_PATH);
