@@ -1,17 +1,16 @@
-const { createServer } = require('https')
-const { parse } = require('url')
-const next = require('next')
-const fs = require('fs')
+// server.js
+const { createServer } = require('https');
+const { parse } = require('url');
+const next = require('next');
+const fs = require('fs');
+require('dotenv').config();
 
-require('dotenv').config()
+const dev = process.env.NODE_ENV !== 'production';
+const hostname = process.env.HOSTNAME || 'localhost';
+const port = parseInt(process.env.PORT, 10) || 3000;
 
-const dev = process.env.NODE_ENV !== 'production'
-
-const hostname = process.env.HOSTNAME
-const port = parseInt(process.env.PORT, 10)
-
-const app = next({ dev, hostname, port })
-const handle = app.getRequestHandler()
+const app = next({ dev, hostname, port });
+const handle = app.getRequestHandler();
 
 const httpsOptions = {
   key: fs.readFileSync(process.env.SSL_KEY_PATH, 'utf8'),
@@ -19,16 +18,39 @@ const httpsOptions = {
 };
 
 app.prepare().then(() => {
-  createServer(httpsOptions, (req, res) => {
-    const parsedUrl = parse(req.url, true)
-    handle(req, res, parsedUrl)
-  }).listen(port, (err) => {
-    if(err) {
-      console.error('Server error:', err);
-      throw err;
+  createServer(httpsOptions, async (req, res) => {
+    try {
+      const parsedUrl = parse(req.url, true);
+      await handle(req, res, parsedUrl);
+    } catch (err) {
+      console.error('Error occurred handling', req.url, err);
+      res.statusCode = 500;
+      res.end('Internal Server Error');
     }
-    console.log('\x1b[35m%s\x1b[0m', 'event', `- started ssl server on https://localhost:${port}`);
+  }).listen(port, (err) => {
+    if (err) throw err;
+    console.log(`> Ready on https://${hostname}:${port}`);
   });
 }).catch(err => {
-  console.error('Preparation error:', err);
+  console.error('Error occurred starting server:', err);
+  process.exit(1);
+});
+
+// グレースフルシャットダウンの処理
+process.on('SIGTERM', () => {
+  console.log('SIGTERM received, shutting down gracefully');
+  server.close(() => {
+    console.log('Server closed');
+    process.exit(0);
+  });
+});
+
+// 未処理の例外とRejectの処理
+process.on('uncaughtException', (error) => {
+  console.error('Uncaught Exception:', error);
+  process.exit(1);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
 });
