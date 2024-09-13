@@ -17,8 +17,10 @@ const httpsOptions = {
   cert: fs.readFileSync(process.env.SSL_CERT_PATH, 'utf8')
 };
 
+let server;
+
 app.prepare().then(() => {
-  createServer(httpsOptions, async (req, res) => {
+  server = createServer(httpsOptions, async (req, res) => {
     try {
       const parsedUrl = parse(req.url, true);
       await handle(req, res, parsedUrl);
@@ -27,7 +29,9 @@ app.prepare().then(() => {
       res.statusCode = 500;
       res.end('Internal Server Error');
     }
-  }).listen(port, (err) => {
+  });
+
+  server.listen(port, (err) => {
     if (err) throw err;
     console.log(`> Ready on https://${hostname}:${port}`);
   });
@@ -35,6 +39,7 @@ app.prepare().then(() => {
   console.error('Error occurred starting server:', err);
   process.exit(1);
 });
+
 
 // グレースフルシャットダウンの処理
 process.on('SIGTERM', () => {

@@ -3,9 +3,9 @@ import path from 'path'
 import { exec } from 'child_process'
 //import axios from 'axios'
 //import FormData from 'form-data'
-import { cleanInput } from '../../lib/utils'
+import { cleanInput } from '../../../lib/utils'
 
-import { whisper } from '../../services/openai'
+import { whisper } from '../../../services/openai'
 
 export async function POST(req) {
 
