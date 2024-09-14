@@ -1,67 +1,59 @@
-// server.js
-const { createServer } = require('https');
-const { parse } = require('url');
-const next = require('next');
-const fs = require('fs');
-require('dotenv').config();
+const { parse } = require('url')
+const next = require('next')
+require('dotenv').config()
 
-const dev = process.env.NODE_ENV !== 'production';
-const hostname = process.env.HOSTNAME || 'localhost';
-const port = parseInt(process.env.PORT, 10) || 3000;
+const dev = process.env.NODE_ENV !== 'production'
+const hostname = process.env.HOSTNAME || 'localhost'
+const port = parseInt(process.env.PORT, 10) || 3000
 
-const app = next({ dev, hostname, port });
-const handle = app.getRequestHandler();
-
-const httpsOptions = {
-  key: fs.readFileSync(process.env.SSL_KEY_PATH, 'utf8'),
-  cert: fs.readFileSync(process.env.SSL_CERT_PATH, 'utf8')
-};
-
-let server;
+const app = next({ dev, hostname, port })
+const handle = app.getRequestHandler()
 
 app.prepare().then(() => {
-  server = createServer(httpsOptions, async (req, res) => {
-    try {
-      const parsedUrl = parse(req.url, true);
-      await handle(req, res, parsedUrl);
-    } catch (err) {
-      console.error('Error occurred handling', req.url, err);
-      res.statusCode = 500;
-      res.end('Internal Server Error');
+  let server;
+
+  if (dev) {
+    // 開発環境：HTTPを使用
+    const { createServer } = require('http')
+    server = createServer((req, res) => {
+      const parsedUrl = parse(req.url, true)
+      handle(req, res, parsedUrl)
+    })
+  } else {
+    // 本番環境：HTTPSを要求
+    const { createServer } = require('https')
+    const fs = require('fs')
+
+    const sslKeyPath = process.env.SSL_KEY_PATH
+    const sslCertPath = process.env.SSL_CERT_PATH
+
+    if (!sslKeyPath || !sslCertPath) {
+      console.error('SSL_KEY_PATH と SSL_CERT_PATH は本番環境で設定する必要があります')
+      process.exit(1)
     }
-  });
 
-  server.listen(port, '0.0.0.0', (err) => {
-    if (err) throw err;
-    console.log(`> Ready on https://${hostname}:${port}`);
-  });
-  
-}).catch(err => {
-  console.error('Error occurred starting server:', err);
-  process.exit(1);
-});
+    try {
+      const httpsOptions = {
+        key: fs.readFileSync(sslKeyPath, 'utf8'),
+        cert: fs.readFileSync(sslCertPath, 'utf8')
+      }
 
-// グレースフルシャットダウンの処理
-process.on('SIGTERM', () => {
-  console.log('SIGTERM received, shutting down gracefully');
-  server.close(() => {
-    console.log('Server closed');
-    process.exit(0);
-  });
-});
+      server = createServer(httpsOptions, (req, res) => {
+        const parsedUrl = parse(req.url, true)
+        handle(req, res, parsedUrl)
+      })
+    } catch (error) {
+      console.error('SSLファイルの読み込みエラー:', error)
+      process.exit(1)
+    }
+  }
 
-// 未処理の例外とRejectの処理
-process.on('uncaughtException', (error) => {
-  console.error('Uncaught Exception:', error);
-  process.exit(1);
-});
+  server.listen(port, (err) => {
+    if (err) throw err
+    console.log(`> Ready on ${dev ? 'http' : 'https'}://${hostname}:${port}`)
+  })
+}).catch((err) => {
+  console.error('サーバー起動エラー:', err)
+  process.exit(1)
+})
 
-process.on('unhandledRejection', (reason, promise) => {
-  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
-});
-
-console.log('Environment:', process.env.NODE_ENV);
-console.log('Hostname:', hostname);
-console.log('Port:', port);
-console.log('SSL Key Path:', process.env.SSL_KEY_PATH);
-console.log('SSL Cert Path:', process.env.SSL_CERT_PATH);

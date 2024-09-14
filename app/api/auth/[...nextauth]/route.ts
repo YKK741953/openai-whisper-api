@@ -1,5 +1,7 @@
 import NextAuth from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials"
+import User from '@/app/models/User'
+import dbConnect from '@/lib/dbConnect'
 
 const handler = NextAuth({
   providers: [
@@ -7,21 +9,40 @@ const handler = NextAuth({
       name: 'Credentials',
       credentials: {
         username: { label: "Username", type: "text", placeholder: "jsmith" },
-        password: {  label: "Password", type: "password" }
+        password: { label: "Password", type: "password" }
       },
-      async authorize(credentials, req) {
-        // ここで認証ロジックを実装します
-        // 例: データベースでユーザーを検索し、パスワードを検証する
-        const user = { id: "1", name: 'J Smith', email: 'jsmith@example.com' }
-        if (user) {
-          return user
-        } else {
-          return null
+      async authorize(credentials) {
+        await dbConnect();
+        if (!credentials?.username || !credentials?.password) {
+          throw new Error('ユーザー名とパスワードを入力してください');
         }
+        const user = await User.findOne({ username: credentials.username });
+        if (!user) {
+          throw new Error('ユーザーが見つかりません');
+        }
+        const isMatch = await user.matchPassword(credentials.password);
+        if (!isMatch) {
+          throw new Error('パスワードが一致しません');
+        }
+        return { id: user._id, name: user.username, email: user.email };
       }
     })
   ],
-  // 必要に応じて追加の設定を行います
+  pages: {
+    signIn: '/login',
+  },
+  callbacks: {
+    async jwt({ token, user }) {
+      if (user) {
+        token.id = user.id;
+      }
+      return token;
+    },
+    async session({ session, token }) {
+      session.user.id = token.id;
+      return session;
+    },
+  },
 })
 
 export { handler as GET, handler as POST }
