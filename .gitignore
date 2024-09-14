@@ -18,6 +18,7 @@ _bin
 stories
 .next
 .env
+.env.local
 out
 build
 *.bu.json

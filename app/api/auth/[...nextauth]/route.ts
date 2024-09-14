@@ -2,6 +2,25 @@ import NextAuth from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials"
 import User from '@/app/models/User'
 import dbConnect from '@/lib/dbConnect'
+import { Session } from "next-auth"
+import { JWT } from "next-auth/jwt"
+
+declare module "next-auth" {
+  interface Session {
+    user: {
+      id: string;
+      name?: string;
+      email?: string;
+      image?: string;
+    }
+  }
+}
+
+declare module "next-auth/jwt" {
+  interface JWT {
+    id: string;
+  }
+}
 
 const handler = NextAuth({
   providers: [
@@ -38,8 +57,10 @@ const handler = NextAuth({
       }
       return token;
     },
-    async session({ session, token }) {
-      session.user.id = token.id;
+    async session({ session, token }: { session: Session; token: JWT }) {
+      if (session.user) {
+        session.user.id = token.id;
+      }
       return session;
     },
   },

@@ -27,12 +27,22 @@ export default function LoginPage() {
         redirect: false,
       })
       if (result?.error) {
-        setError(result.error)
+        switch (result.error) {
+          case "CredentialsSignin":
+            setError("ユーザー名またはパスワードが正しくありません")
+            break
+          case "ユーザーが見つかりません":
+          case "パスワードが一致しません":
+            setError(result.error)
+            break
+          default:
+            setError("ログイン中にエラーが発生しました")
+        }
       } else {
         router.push("/dashboard")
       }
     } catch (error) {
-      setError("ログイン中にエラーが発生しました")
+      setError("ネットワークエラーが発生しました。再度お試しください。")
     } finally {
       setIsLoading(false)
     }
