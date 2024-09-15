@@ -45,7 +45,7 @@ try:
     subprocess.run(["git", "add", "."], check=True)
 
     # コミットメッセージを生成（日付を含む）
-    commit_message = f"app and my-appの統一前のバックアップ commit on {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
+    commit_message = f"app and my-appの統一前のバックアップtry2 commit on {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
 
     # コミットを実行
     subprocess.run(["git", "commit", "-m", commit_message], check=True)
