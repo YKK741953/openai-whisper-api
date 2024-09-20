@@ -1,10 +1,14 @@
 import os
 import shutil
 import subprocess
+from dotenv import load_dotenv
 
-# 証明書ファイルのパスを直接指定
-ssl_key_path = '/etc/letsencrypt/live/parivateapps3333.site/privkey.pem'
-ssl_cert_path = '/etc/letsencrypt/live/parivateapps3333.site/fullchain.pem'
+# .envファイルを読み込む
+load_dotenv()
+
+# 環境変数から証明書ファイルのパスを取得
+ssl_key_path = os.getenv('ORIGINAL_SSL_KEY_PATH')
+ssl_cert_path = os.getenv('ORIGINAL_SSL_CERT_PATH')
 
 # HTTPSフォルダのパスを設定
 https_folder = os.path.join(os.path.dirname(__file__), 'HTTPS')
@@ -30,10 +34,10 @@ if os.path.exists(env_file_path):
         env_contents = f.read()
     
     new_env_contents = env_contents.replace(
-        'SSL_KEY_PATH=/etc/letsencrypt/live/parivateapps3333.site/privkey.pem',
+        ssl_key_path,
         f'SSL_KEY_PATH={os.path.join(https_folder, "privkey.pem")}'
     ).replace(
-        'SSL_CERT_PATH=/etc/letsencrypt/live/parivateapps3333.site/fullchain.pem',
+        ssl_cert_path,
         f'SSL_CERT_PATH={os.path.join(https_folder, "fullchain.pem")}'
     )
     
