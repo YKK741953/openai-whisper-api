@@ -45,7 +45,7 @@ try:
     subprocess.run(["git", "add", "."], check=True)
 
     # コミットメッセージを生成（日付を含む）
-    commit_message = f"my-app削除トライ前。　commit on {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
+    commit_message = f"パス設定二失敗。もとにもどす。　commit on {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
 
     # コミットを実行
     subprocess.run(["git", "commit", "-m", commit_message], check=True)
