@@ -8,7 +8,7 @@ const securityHeaders = [
 ]
 
 const nextConfig = {
-  basePath: process.env.PATH, // 環境変数PATHをbasePathとして設定
+  basePath: process.env.BASE_PATH, // 環境変数BASE_PATHをbasePathとして設定
   webpack: function(config) {
     config.module.rules.push({
       test: /\.md$/,
