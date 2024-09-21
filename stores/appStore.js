@@ -4,7 +4,7 @@ import { persist, createJSONStorage } from 'zustand/middleware'
 export const useAppStore = create(
   persist(
     (set, get) => ({
-      language: 'en',
+      language: 'jp',
       endpoint: 'transcriptions',
       prompt: '',
       temperature: 0,

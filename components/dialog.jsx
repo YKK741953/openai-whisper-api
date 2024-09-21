@@ -41,8 +41,10 @@ export default function Dialog({ onClose = undefined }) {
                             <option value={4000}>4000 ms</option>
                             <option value={4500}>4500 ms</option>
                             <option value={5000}>5000 ms</option>
+                            <option value={10000}>10000 ms</option>
                         </select>
                     </div>
+
                     <div className={classes.item}>
                         <label className={classes.label}>MinDecibels</label>
                         <select className={classes.select} value={threshold} onChange={(e) => setThreshold(e.target.value)}>
