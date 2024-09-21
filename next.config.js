@@ -8,6 +8,7 @@ const securityHeaders = [
 ]
 
 const nextConfig = {
+  basePath: '/whisper',
   webpack: function(config) {
     config.module.rules.push({
       test: /\.md$/,
@@ -16,7 +17,7 @@ const nextConfig = {
     return config
   },
   env: {
-    siteTitle: 'Whisper API Sample App',
+    siteTitle: 'Whisper API STT App',
   },
   async headers() {
     return [
