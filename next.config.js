@@ -1,37 +1,24 @@
 /** @type {import('next').NextConfig} */
 
-const securityHeaders = [
-  {
-    key: 'Strict-Transport-Security',
-    value: 'max-age=63072000; includeSubDomains; preload'
-  },
-]
-
 const nextConfig = {
-  //basePath: process.env.BASE_PATH, // 環境変数BASE_PATHをbasePathとして設定
-  webpack: function(config) {
-    config.module.rules.push({
-      test: /\.md$/,
-      use: 'raw-loader',
-    })
-    return config
-  },
-  env: {
-    siteTitle: 'Whisper API STT App',
-  },
+  // 他の設定
+  // セキュリティヘッダーを削除またはコメントアウト
+  /*
   async headers() {
     return [
       {
         source: '/:path*',
-        headers: securityHeaders,
+        headers: [
+          {
+            key: 'Strict-Transport-Security',
+            value: 'max-age=63072000; includeSubDomains; preload'
+          },
+        ],
       }
     ]
   },
-  serverRuntimeConfig: {
-    PROJECT_ROOT: __dirname,
-  },
-  trailingSlash: true,
-
+  */
+  // 他の設定
 };
 
 module.exports = nextConfig;
