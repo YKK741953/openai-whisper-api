@@ -30,9 +30,7 @@ const nextConfig = {
     PROJECT_ROOT: __dirname,
   },
   trailingSlash: true,
-  experimental: {
-    appDir: true,
-  },
+
 };
 
 module.exports = nextConfig;
