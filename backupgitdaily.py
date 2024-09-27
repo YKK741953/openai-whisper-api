@@ -3,6 +3,8 @@
 import os
 import subprocess
 from datetime import datetime
+import tkinter as tk
+from tkinter import simpledialog
 
 # Git リポジトリのパス
 #repo_path = r"D:\Yuki\Dropbox\AI\AI_arts\automatic_pictupdateproject"
@@ -44,14 +46,19 @@ try:
     # 変更をステージングエリアに追加
     subprocess.run(["git", "add", "."], check=True)
 
-    # コミットメッセージを生成（日付を含む）
-    commit_message = f"Auto commit on {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
+    # ユーザーからの入力を取得
+    root = tk.Tk()
+    root.withdraw()  # メインウィンドウを非表示にする
+    user_comment = simpledialog.askstring("コミットメッセージ", "コミットメッセージを入力してください：")
+
+    # コミットメッセージを生成（ユーザーの入力と日付を含む）
+    commit_message = f"{user_comment} - {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
 
     # コミットを実行
     subprocess.run(["git", "commit", "-m", commit_message], check=True)
 
     # 必要に応じてプッシュを追加
-    # subprocess.run(["git", "push", "origin", "main"], check=True)
+    subprocess.run(["git", "push", "origin", "main"], check=True)
 
     print("Commit successful")
 
